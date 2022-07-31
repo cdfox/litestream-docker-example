@@ -97,3 +97,57 @@ application/framework:
 ```sh
 litestream restore -o data.db s3://pocketbase-litestream-demo/pb_data
 ```
+
+### Deploy with Fly.io
+
+
+Create a Fly.io account: https://fly.io/app/sign-in
+
+Install flyctl: https://fly.io/docs/getting-started/installing-flyctl/
+
+Next, log in on the terminal:
+```sh
+fly auth login
+```
+
+Now run the launch command, which will take you through
+some setup steps. When it asks, skip deploying for now
+(it would fail at this point because we haven't set up secrets).
+
+```sh
+fly launch
+```
+
+In the generated `fly.toml`, set
+```yaml
+  internal_port = 8090
+```
+and add
+```yaml
+[env]
+  REPLICA_URL = "s3://pocketbase-litestream-demo/pb_data"
+```
+
+Next, set secrets needed for S3 access:
+
+```sh
+fly secrets set LITESTREAM_ACCESS_KEY_ID=XXX
+fly secrets set LITESTREAM_SECRET_ACCESS_KEY=XXX
+```
+
+Now, we are ready to deploy:
+
+```sh
+fly deploy
+```
+
+If all goes well, after a minute or so the monitoring
+will rpeort success. Then you can open the site in
+a browser:
+
+```sh
+fly open
+```
+
+You'll get a 404, which is expected. Add `"/_"` to the
+end of the URL to get to the admin UI. 
