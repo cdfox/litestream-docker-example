@@ -1,24 +1,51 @@
-Litestream & Docker Example
+Litestream + PocketBase Example
 ===========================
 
-This repository provides an example of running a Go application in the same
-container as Litestream by using the built-in subprocess execution. This allows
-developers to release their SQLite-based application and provide replication in
-a single container.
+This repository provides an example of running PocketBase in the same
+container as Litestream. It's a fork of the Litestream & Docker example
+here: https://github.com/benbjohnson/litestream-docker-example
+
+PocketBase is a Go web backend that provides APIs similar
+to Firebase (realtime subscriptions). It uses sqlite as its database
+and provides an Admin web interface for creating data models and viewing
+and modifying the data. This is pretty nifty because, similar to Firebase, 
+one can build some types of apps without needing to write any backend 
+code.
+
+Litestream provides live replication of sqlite to S3 (as well as other
+storage services). It has a subprocess execution mode that makes it
+easier to run a web app and the Litestream replication process
+together in a single container.
+
+Putting these two things together, you get a web backend that runs as
+a single container, with data continuously backed up to S3 (which is
+pretty cheap for small amounts of data). The container does not
+need to have persistent storage mounted as a volume. The configuration
+of data models can be done in a web interface. The single container
+approach works well with services like Fly.io, where running one container
+on a small compute instance is free. And to top it all off, this setup
+has minimal lock-in. The data is in sqlite, it's possible to use other
+storage services than S3, and the PocketBase Go application is open
+source and can be extended.
+
+The main drawbacks are that only one instance of the application can 
+be running and the data must be relatively small. Both issues could
+potentially be addressed by sharding the data. In addition, Litestream 
+is planned to add support for live read replicas, which would allow
+multiple instances of the app to work on the same data. It might 
+also be possible to go pretty far with vertical scaling, i. e.,
+use compute instances with a lot of CPU and memory.
 
 
 ## Usage
 
 ### Prerequisites
 
-To test this locally, you'll need to have an S3-compatible store to connect to.
-Please see the [Litestream Guides](https://litestream.io/guides/) to get set up
-on your preferred object store.
+It's assumed you have an AWS account and have created an IAM user with
+permissions for an S3 bucket called pocketbase-litestream-demo.
 
-You'll also need to update the replica URL in `etc/litestream.yml` in this
-repository to your appropriate object store.
-
-You'll also need to set your object store credentials in your shell environment:
+You'll need to get an access key id and secret for the IAM user and 
+set them in your shell environment:
 
 ```sh
 export LITESTREAM_ACCESS_KEY_ID=XXX
@@ -49,20 +76,8 @@ docker run -i -t \
 
 ### Testing it out
 
-In another window, you can run:
-
-```sh
-curl localhost:8080
-```
-
-and you should see:
-
-```
-This server has been visited 1 times.
-```
-
-Each time you run cURL, it will increment that value by one.
-
+Try stopping the container and start it again. You should that 
+changes you've made to the data are persisted across restarts.
 
 ### Recovering your database
 
