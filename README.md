@@ -24,7 +24,7 @@ a single container, with data continuously backed up to S3 (which is
 pretty cheap for small amounts of data). The container does not
 need to have persistent storage mounted as a volume. The configuration
 of data models can be done in a web interface. The single container
-approach works well with services like Fly.io, where running one container
+approach works well with services like [Fly.io](https://fly.io/), where running one container
 on a small compute instance is free. And to top it all off, this setup
 has minimal lock-in. The data is in sqlite, it's possible to use other
 storage services than S3, and the PocketBase Go application is open
