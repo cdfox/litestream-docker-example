@@ -76,24 +76,22 @@ docker run -i -t \
 
 ### Testing it out
 
-Try stopping the container and start it again. You should that 
-changes you've made to the data are persisted across restarts.
+Go ahead and follow the link PocketBase prints to the terminal
+to open the admin UI. Create an admin user.
 
-### Recovering your database
+Now, create a collection, add a field to it, and create a few
+records. 
 
-You can simulate a catastrophic disaster by stopping your container and then
-deleting your database:
+Try stopping the container and start it again. If you refresh
+the admin page, you should remain logged in and continue to 
+see the records you just created.
 
+### Downloading the database
+
+You can download a copy of the database, if, for example, you 
+wanted to inspect it locally or port the data to another web 
+application/framework:
+
+```sh
+litestream restore -o data.db s3://pocketbase-litestream-demo/pb_data
 ```
-rm -rf db db-shm db-wal .db-litestream
-```
-
-When you restart the container again, it should print:
-
-```
-No database found, restoring from replica if exists
-```
-
-and then begin restoring from your replica. The visit counter on your app should
-continue where it left off.
-
