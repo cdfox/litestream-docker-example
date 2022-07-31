@@ -1,8 +1,10 @@
 Litestream + PocketBase Example
 ===========================
 
-This repository provides an example of running PocketBase in the same
-container as Litestream. It's a fork of the Litestream & Docker example
+This repository provides an example of running 
+[PocketBase](https://pocketbase.io/) in the same
+container as [Litestream](https://litestream.io/). 
+It's a fork of the Litestream & Docker example
 here: https://github.com/benbjohnson/litestream-docker-example
 
 PocketBase is a Go web backend that provides APIs similar
