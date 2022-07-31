@@ -31,38 +31,20 @@ export LITESTREAM_SECRET_ACCESS_KEY=XXX
 You can build the application with the following command:
 
 ```sh
-docker build -t myapp .
+docker build -t pocketbase-litestream-demo .
 ```
 
-Once the image is built, you can run it with the following command. _Be sure to
-change the `REPLICA_URL` variable to point to your bucket_.
+Once the image is built, you can run it with the following command. Assumes
+that you have a bucket called pocketbase-litestream-demo.
 
 ```sh
-docker run \
-  -p 8080:8080 \
-  -v ${PWD}:/data \
-  -e REPLICA_URL=s3://YOURBUCKETNAME/db \
+docker run -i -t \
+  -p 8090:8090 \
+  -e REPLICA_URL=s3://pocketbase-litestream-demo/pb_data \
   -e LITESTREAM_ACCESS_KEY_ID \
   -e LITESTREAM_SECRET_ACCESS_KEY \
-  myapp
+  pocketbase-litestream-demo
 ```
-
-Let's break down the options one-by-one:
-
-- `-p 8080:8080`—maps the container's port 8080 to the host machine's port 8080
-  so you can access the application's web server.
-
-- `-v ${PWD}:/data`—mounts a volume from your current directory on the host
-  to the `/data` directory inside the container.
-
-- `-e REPLICA_URL=...`—sets an environment variable for your replica. This is
-  used by the startup script to restore the database from a replica if it
-  doesn't exist and it is used in the Litestream configuration file.
-
-- `-e LITESTREAM_ACCESS_KEY_ID` & `-e LITESTREAM_SECRET_ACCESS_KEY`—passes
-  through your current environment variables for your S3 credentials to the
-  container. You can also use `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-  instead.
 
 
 ### Testing it out
